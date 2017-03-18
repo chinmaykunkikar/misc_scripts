@@ -1,4 +1,7 @@
-#!/system/bin/sh
+#!/sbin/busybox sh
+#
+# Try redirecting output to recovery output
+# OUTFD=/proc/self/fd/$2
 #
 # Debloat script by @chinmaykunkikar.
 #
@@ -8,13 +11,12 @@
 # apps in AEX, it still needs to be de-bloated.
 #
 # Anyone can make this script flashable by running
-# it through /data/local/tmp (or from anywhere else)
+# it through /tmp (or from anywhere else)
 # using chmod 755.
 # The same thing can be achieved by running delete_recursive
 # in updater-script but I honestly feel that shell
-# scrips are more versatile than edify or updater-scripts
-# because less syntax errors and you can also
-# run them on terminal emulators.
+# script is more versatile than edify or updater-script as 
+# you can also run it on ter`minal emulators.
 #
 
 # Initializations
@@ -78,8 +80,13 @@ echo "Removing apps now..."
 echo ""
 for package in ${APP[*]}
 do
-    echo "Removing $package"
-    rm -fr "${APPSDIR:?}/$package"
+    if [ -e ${APP[$package]} ];
+    then
+        echo "Removing $package"
+        rm -fr "${APPSDIR:?}/$package"
+    else
+        echo "$package not found, skipping..."
+    fi
 done
 
 echo ""
@@ -87,6 +94,11 @@ echo "Removing priv-apps now..."
 echo ""
 for privpackage in ${PRIVAPP[*]}
 do
-    echo "Removing $privpackage"
-    rm -fr "${PRIVAPPSDIR:?}/$privpackage"
+    if [ -e ${PRIVAPP[$privpackage]} ];
+    then
+        echo "Removing $privpackage"
+        rm -fr "${PRIVAPPSDIR:?}/$privpackage"
+    else
+        echo "$privpackage not found, skipping...""
+    fi
 done
